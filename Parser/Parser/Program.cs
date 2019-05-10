@@ -1,15 +1,28 @@
 ﻿using Parser.BLL;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Parser
 {
     class Program
     {
+        static ServiceProvider serviceProvider;
+        static void Setup()
+        {
+            serviceProvider = new ServiceCollection().
+            AddTransient<IParser, BLL.Parser>().
+            AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
+                new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
+            AddTransient<ILogService, LogService>().BuildServiceProvider();
+        }
+
         static void Main(string[] args)
         {
-            LogService logService = new LogService();
+            Setup();
+            var logService = serviceProvider.GetService<ILogService>();
             var log = logService.ReadLog("access_log");
-            var parser = new BLL.Parser(new AccessLogLineParser());
+            var parser = serviceProvider.GetService<IParser>();
             var logLines = parser.Parse(log);
+
             foreach(var line in logLines)
             {
                 if(line!=null)

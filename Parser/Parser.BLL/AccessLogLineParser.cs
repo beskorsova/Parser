@@ -6,10 +6,10 @@ namespace Parser.BLL
 {
     public class AccessLogLineParser: ILineParser
     {
-        protected string[] ExcludedRoutes = { ".jpg", ".gif", ".png", ".css", ".js" };
-        public AccessLogLineParser()
+        private string[] excludedRoutes { get; set; }
+        public AccessLogLineParser(string[] excludedRoutes)
         {
-
+            this.excludedRoutes = excludedRoutes;
         }
         public LogLine ParseLine(string line)
         {
@@ -27,7 +27,7 @@ namespace Parser.BLL
                 index = line.IndexOf('?');
                 result.Route = index != -1 ? line.Substring(0, index) : line.Substring(0, line.IndexOf(' '));
 
-                foreach (var excludedRoute in this.ExcludedRoutes)
+                foreach (var excludedRoute in this.excludedRoutes)
                 {
                     if (result.Route.EndsWith(excludedRoute))
                         return null;
