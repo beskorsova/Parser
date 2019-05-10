@@ -15,5 +15,9 @@ namespace Parser.BLL.Models
         {
             this.Parameters = new Dictionary<string, string>();
         }
+        public override string ToString()
+        {
+            return $"{Date} {Host} {Route} {Parameters.Count} {StatusResult} {BytesSent}";
+        }
     }
 }

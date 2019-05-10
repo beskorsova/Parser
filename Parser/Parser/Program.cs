@@ -9,25 +9,26 @@ namespace Parser
         static void Setup()
         {
             serviceProvider = new ServiceCollection().
-            AddTransient<IParser, BLL.Parser>().
-            AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
-                new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
-            AddTransient<ILogService, LogService>().BuildServiceProvider();
+                AddTransient<IParser, BLL.Parser>().
+                AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
+                    new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
+                AddTransient<ILogService, LogService>().BuildServiceProvider();
         }
 
         static void Main(string[] args)
         {
             Setup();
+
             var logService = serviceProvider.GetService<ILogService>();
-            var log = logService.ReadLog("access_log");
             var parser = serviceProvider.GetService<IParser>();
+            var log = logService.ReadLog("access_log");
             var logLines = parser.Parse(log);
 
-            foreach(var line in logLines)
+            foreach (var line in logLines)
             {
-                if(line!=null)
+                if (line != null)
                 {
-                    System.Console.WriteLine(line.Host);
+                    System.Console.WriteLine(line);
                 }
             }
         }

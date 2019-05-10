@@ -14,42 +14,53 @@ namespace Parser.BLL
         public LogLine ParseLine(string line)
         {
             var result = new LogLine();
-            result.Host = line.Substring(0, line.IndexOf(' '));
+            var startIndex = 0;
+            var endIndex = line.IndexOf(' ');
+            result.Host = line.Substring(startIndex, endIndex - startIndex);
 
-            line = line.Substring(line.IndexOf(" - - [") + 6);
-            result.Date = DateTime.ParseExact(line.Substring(0, line.IndexOf("]")), "dd/MMM/yyyy:HH:mm:ss zzz", CultureInfo.InvariantCulture).ToUniversalTime();
-
-            line = line.Substring(line.IndexOf("]"));
-            var index = line.IndexOf(" /");
-            if (index != -1)
+            startIndex = line.IndexOf(" - - [", endIndex) + 6;
+            endIndex = line.IndexOf("]", startIndex);
+            result.Date = DateTime.ParseExact(line.Substring(startIndex, endIndex - startIndex), "dd/MMM/yyyy:HH:mm:ss zzz", CultureInfo.InvariantCulture)
+                .ToUniversalTime();
+            
+            startIndex = line.IndexOf(" /", endIndex);
+            if (startIndex != -1)
             {
-                line = line.Substring(index + 1);
-                index = line.IndexOf('?');
-                result.Route = index != -1 ? line.Substring(0, index) : line.Substring(0, line.IndexOf(' '));
-
-                foreach (var excludedRoute in this.excludedRoutes)
+                startIndex += 1;
+                endIndex = line.IndexOf('?', startIndex);
+                if (endIndex == -1)
                 {
-                    if (result.Route.EndsWith(excludedRoute))
-                        return null;
+                    endIndex = line.IndexOf(' ', startIndex);
+                    result.Route = line.Substring(startIndex, endIndex - startIndex);
                 }
-                if (index != -1)
+                else
                 {
-                    line = line.Substring(index + 1);
-                    var pairs = line.Substring(0, line.IndexOf(' ')).Split('&');
+                    result.Route = line.Substring(startIndex, endIndex - startIndex);
+
+                    startIndex = endIndex + 1;
+                    endIndex = line.IndexOf(' ', startIndex);
+                    var pairs = line.Substring(startIndex, endIndex - startIndex).Split('&');
                     foreach (var p in pairs)
                     {
                         var i = p.IndexOf('=');
                         result.Parameters.Add(p.Substring(0, i), p.Substring(i + 1));
                     }
                 }
+
+                foreach (var excludedRoute in this.excludedRoutes)
+                {
+                    if (result.Route.EndsWith(excludedRoute))
+                        return null;
+                }
             }
 
-            line = line.Substring(line.IndexOf("\" ") + 2);
-            result.StatusResult = int.Parse(line.Substring(0, line.IndexOf(' ')));
+            startIndex =  line.IndexOf("\" ", endIndex) + 2;
+            endIndex = line.IndexOf(' ', startIndex);
+            result.StatusResult = int.Parse(line.Substring(startIndex, endIndex - startIndex));
 
-            line = line.Substring(line.IndexOf(' '));
+            startIndex = line.IndexOf(' ', endIndex);
             int bytesSent = 0;
-            if (int.TryParse(line, out bytesSent))
+            if (int.TryParse(line.Substring(startIndex), out bytesSent))
             {
                 result.BytesSent = bytesSent;
             }
