@@ -36,9 +36,13 @@ namespace Parser
             var logLineService = serviceProvider.GetService<IParserStoreService>();
             using (serviceProvider.CreateScope())
             {
-                await logLineService.CreateAsync(new BLL.DTO.LogLineDto
+                foreach (var line in logLines)
                 {
-                });
+                    if (line != null)
+                    {
+                        await logLineService.CreateAsync(line);
+                    }
+                }
             }
 
         }

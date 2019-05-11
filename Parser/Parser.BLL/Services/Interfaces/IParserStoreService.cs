@@ -1,10 +1,10 @@
-﻿using Parser.BLL.DTO;
+﻿using Parser.BLL.Models;
 using System.Threading.Tasks;
 
 namespace Parser.BLL.Services.Interfaces
 {
     public interface IParserStoreService
     {
-        Task CreateAsync(LogLineDto logLineDto);
+        Task CreateAsync(LogLineModel logLineDto);
     }
 }

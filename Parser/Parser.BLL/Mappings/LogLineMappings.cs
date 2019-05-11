@@ -1,23 +1,24 @@
 ﻿using EmitMapper;
 using EmitMapper.MappingConfiguration;
-using Parser.BLL.DTO;
+using Parser.BLL.Models;
 using Parser.Data.Core.Entities;
+using System.Linq;
 
 namespace Parser.BLL.Mappings
 {
     static class LogLineMappings
     {
-        private static readonly ObjectsMapper<LogLineDto, LogLine> ToLogLineMapper;
+        private static readonly ObjectsMapper<LogLineModel, LogLine> ToLogLineMapper;
         static LogLineMappings()
         {
-            DefaultMapConfig config = new DefaultMapConfig().IgnoreMembers<LogLineDto, LogLine>(new[] { nameof(LogLineDto.Parameters) });
-            ToLogLineMapper = ObjectMapperManager.DefaultInstance.GetMapper<LogLineDto, LogLine>(config);
+            DefaultMapConfig config = new DefaultMapConfig().IgnoreMembers<LogLineModel, LogLine>(new[] { nameof(LogLineModel.Parameters) });
+            ToLogLineMapper = ObjectMapperManager.DefaultInstance.GetMapper<LogLineModel, LogLine>(config);
         }
 
-        public static LogLine ToLogLine(this LogLineDto dto)
+        public static LogLine ToLogLine(this LogLineModel dto)
         {
             var result = ToLogLineMapper.Map(dto);
-            result.Parameters = dto.Parameters.ToQueryParameters();
+            result.Parameters = dto.Parameters.Select(x => new QueryParameter { Name = x.Key, Value = x.Value }).ToList();
             return result;
         }
     }

@@ -1,5 +1,5 @@
-﻿using Parser.BLL.DTO;
-using Parser.BLL.Mappings;
+﻿using Parser.BLL.Mappings;
+using Parser.BLL.Models;
 using Parser.BLL.Services.Interfaces;
 using Parser.Data.Core.DataAccess;
 using System.Threading.Tasks;
@@ -14,9 +14,9 @@ namespace Parser.BLL.Services
         {
             this.repository = repository;
         }
-        public async Task CreateAsync(LogLineDto logLineDto)
+        public async Task CreateAsync(LogLineModel logLineModel)
         {
-            var logLine = logLineDto.ToLogLine();
+            var logLine = logLineModel.ToLogLine();
             await this.repository.AddAsync(logLine);
         }
     }
