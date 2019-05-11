@@ -1,9 +1,7 @@
 ﻿using Parser.BLL;
 using Microsoft.Extensions.DependencyInjection;
-using Parser.Data.Core.DataAccess;
 using Parser.Configuration;
 using System;
-using Parser.Data.Core.Entities;
 
 namespace Parser
 {
@@ -32,17 +30,6 @@ namespace Parser
                 {
                     System.Console.WriteLine(line);
                 }
-            }
-            using (serviceProvider.CreateScope())
-            {
-                var repository = serviceProvider.GetService<IAsyncRepository>();
-                await repository.AddAsync(new LogLine()
-                {
-                    BytesSent = 1,
-                    Date = DateTime.Now,
-                    Host = "1",
-                    Route = "1"
-                });
             }
 
         }
