@@ -1,5 +1,9 @@
 ﻿using Parser.BLL;
 using Microsoft.Extensions.DependencyInjection;
+using Parser.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Parser
 {
@@ -8,7 +12,16 @@ namespace Parser
         static ServiceProvider serviceProvider;
         static void Setup()
         {
+            //var builder = new ConfigurationBuilder()
+            //    .SetBasePath(Directory.GetCurrentDirectory())
+            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            //IConfigurationRoot configuration = builder.Build();
+
             serviceProvider = new ServiceCollection().
+                //AddDbContext<ParserDbContext>(options =>
+                //    options.UseSqlServer(configuration.GetConnectionString("Default"),
+                //    x => x.MigrationsAssembly("Parser.Data"))).
                 AddTransient<IParser, BLL.Parser>().
                 AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
                     new[] { ".jpg", ".gif", ".png", ".css", ".js" })).

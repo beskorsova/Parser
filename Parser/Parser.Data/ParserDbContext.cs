@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Parser.Data.Core.Entities;
 
 namespace Parser.Data
 {
     public class ParserDbContext : DbContext
     {
-        protected ParserDbContext(DbContextOptions<ParserDbContext> options) : base(options)
+        public ParserDbContext(DbContextOptions<ParserDbContext> options) : base(options)
         {
         }
+
+        public DbSet<QueryParameter> QueryParameters { get; set; }
     }
 }
