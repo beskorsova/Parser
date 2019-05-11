@@ -11,9 +11,9 @@ namespace Parser.BLL
         {
             this.excludedRoutes = excludedRoutes;
         }
-        public LogLine ParseLine(string line)
+        public LogLineModel ParseLine(string line)
         {
-            var result = new LogLine();
+            var result = new LogLineModel();
             var startIndex = 0;
             var endIndex = line.IndexOf(' ');
             result.Host = line.Substring(startIndex, endIndex - startIndex);

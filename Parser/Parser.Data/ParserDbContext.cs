@@ -10,5 +10,6 @@ namespace Parser.Data
         }
 
         public DbSet<QueryParameter> QueryParameters { get; set; }
+        public DbSet<LogLine> LogLines { get; set; }
     }
 }

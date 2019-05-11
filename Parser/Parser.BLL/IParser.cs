@@ -5,6 +5,6 @@ namespace Parser.BLL
 {
     public interface IParser
     {
-        IEnumerable<LogLine> Parse(IEnumerable<string> fileLines);
+        IEnumerable<LogLineModel> Parse(IEnumerable<string> fileLines);
     }
 }
