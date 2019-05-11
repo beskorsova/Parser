@@ -23,9 +23,9 @@ namespace Parser.BLL.Mappings
             return result;
         }
 
-        public static List<LogLine> ToLogLines(this IEnumerable<LogLineModel> dtos)
+        public static IEnumerable<LogLine> ToLogLines(this IEnumerable<LogLineModel> dtos)
         {
-            return dtos.Select(x => x.ToLogLine()).ToList();
+            return dtos.Select(x => x.ToLogLine());
         }
     }
 }
