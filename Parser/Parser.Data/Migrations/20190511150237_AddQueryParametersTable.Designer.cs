@@ -10,8 +10,8 @@ using Parser.Data;
 namespace Parser.Data.Migrations
 {
     [DbContext(typeof(ParserDbContext))]
-    [Migration("20190511113649_AddLogLinesTable")]
-    partial class AddLogLinesTable
+    [Migration("20190511150237_AddQueryParametersTable")]
+    partial class AddQueryParametersTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.LogLine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -44,11 +44,11 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.QueryParameter", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LogLineId");
+                    b.Property<long>("LogLineId");
 
                     b.Property<string>("Name");
 
@@ -63,9 +63,10 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.QueryParameter", b =>
                 {
-                    b.HasOne("Parser.Data.Core.Entities.LogLine")
+                    b.HasOne("Parser.Data.Core.Entities.LogLine", "LogLine")
                         .WithMany("Parameters")
-                        .HasForeignKey("LogLineId");
+                        .HasForeignKey("LogLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Parser.Data.Core.Entities
 {
-    public class LogLine : IEntity<int>
+    public class LogLine : BaseEntity
     {
-        public int Id { get; set; }
         public string Host { get; set; }
         public string Route { get; set; }
         public DateTime Date { get; set; }

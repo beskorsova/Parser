@@ -1,9 +1,14 @@
 ﻿using Parser.BLL;
 using Microsoft.Extensions.DependencyInjection;
+using Parser.Data.Core.DataAccess;
+using Parser.Data.DataAccess;
+using Parser.Data.Core.Entities;
 using Parser.Data;
-using Microsoft.EntityFrameworkCore;
+using System;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace Parser
 {
@@ -12,23 +17,29 @@ namespace Parser
         static ServiceProvider serviceProvider;
         static void Setup()
         {
-            //var builder = new ConfigurationBuilder()
-            //    .SetBasePath(Directory.GetCurrentDirectory())
-            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json")
+               .AddUserSecrets(Assembly.GetExecutingAssembly())
+               .Build();
 
-            //IConfigurationRoot configuration = builder.Build();
+            var services = new ServiceCollection();
 
-            serviceProvider = new ServiceCollection().
-                //AddDbContext<ParserDbContext>(options =>
-                //    options.UseSqlServer(configuration.GetConnectionString("Default"),
-                //    x => x.MigrationsAssembly("Parser.Data"))).
+            services.
+                AddDbContext<ParserDbContext>(
+                    x => x.UseSqlServer(configuration.GetConnectionString("Default"))
+                ).
                 AddTransient<IParser, BLL.Parser>().
                 AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
                     new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
-                AddTransient<ILogService, LogService>().BuildServiceProvider();
+                AddTransient<ILogService, LogService>();
+
+            services.AddScoped<IAsyncRepository, AsyncRepository>();
+
+            serviceProvider = services.BuildServiceProvider();
         }
 
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             Setup();
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -45,6 +56,7 @@ namespace Parser
                     System.Console.WriteLine(line);
                 }
             }
+
         }
     }
 }

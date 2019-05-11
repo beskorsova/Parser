@@ -21,7 +21,7 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.LogLine", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -42,11 +42,11 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.QueryParameter", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LogLineId");
+                    b.Property<long>("LogLineId");
 
                     b.Property<string>("Name");
 
@@ -63,7 +63,8 @@ namespace Parser.Data.Migrations
                 {
                     b.HasOne("Parser.Data.Core.Entities.LogLine")
                         .WithMany("Parameters")
-                        .HasForeignKey("LogLineId");
+                        .HasForeignKey("LogLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -8,6 +8,7 @@
     <Compile Remove="Migrations\20190511100957_InitialMigration.cs" />
     <Compile Remove="Migrations\20190511101538_InitialMigration.cs" />
     <Compile Remove="Migrations\20190511105003_InitialMigration.cs" />
+    <Compile Remove="Migrations\20190511144629_ChangedIdToLong.cs" />
   </ItemGroup>
 
   <ItemGroup>

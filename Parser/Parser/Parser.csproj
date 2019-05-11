@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>12de3c69-c1dd-4e79-bb0d-6a354e974234</UserSecretsId>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
@@ -31,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Parser.BLL\Parser.BLL.csproj" />
+    <ProjectReference Include="..\Parser.Data.Core\Parser.Data.Core.csproj" />
     <ProjectReference Include="..\Parser.Data\Parser.Data.csproj" />
   </ItemGroup>
 
