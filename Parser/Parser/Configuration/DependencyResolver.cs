@@ -2,8 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Parser.BLL;
 using Parser.BLL.Options;
+using Parser.BLL.Parse;
+using Parser.BLL.Parse.Interfaces;
+using Parser.BLL.Services;
+using Parser.BLL.Services.Interfaces;
 using Parser.Data;
 using Parser.Data.Core.DataAccess;
 using Parser.Data.DataAccess;
@@ -32,12 +35,14 @@ namespace Parser.Configuration
             });
 
             services.
-                AddTransient<IParser, BLL.Parser>().
+                AddTransient<IParser, BLL.Parse.Parser>().
                 AddTransient<ILineParser, AccessLogLineParser>(x =>
                 new AccessLogLineParser(x.GetService<IOptions<ExcludeRule>>().Value)).
                 AddTransient<ILogService, LogService>();
 
             services.AddScoped<IAsyncRepository, AsyncRepository>();
+
+            services.AddTransient<IParserStoreService, ParserStoreService>();
 
             // Register ParserDbContext
             services.AddScoped(provider =>

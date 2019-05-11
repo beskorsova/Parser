@@ -18,7 +18,11 @@ namespace Parser.Data.DataAccess
         public async Task AddAsync<T>(T entity, CancellationToken token = default(CancellationToken)) where T : BaseEntity
         {
             await Context.Set<T>().AddAsync(entity);
-            await this.Context.SaveChangesAsync(token);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await this.Context.SaveChangesAsync();
         }
     }
 }

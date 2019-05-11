@@ -1,6 +1,6 @@
 ﻿using Parser.BLL.Models;
 
-namespace Parser.BLL
+namespace Parser.BLL.Parse.Interfaces
 {
     public interface ILineParser
     {

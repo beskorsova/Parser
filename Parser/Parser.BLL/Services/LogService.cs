@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Parser.BLL.Services.Interfaces;
+using System.Collections.Generic;
 using System.IO;
 
-namespace Parser.BLL
+namespace Parser.BLL.Services
 {
     public class LogService: ILogService
     {
