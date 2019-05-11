@@ -1,9 +1,10 @@
 ﻿using Parser.BLL.Models;
 using Parser.BLL.Options;
+using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Globalization;
 
-namespace Parser.BLL
+namespace Parser.BLL.Parse
 {
     public class AccessLogLineParser: ILineParser
     {

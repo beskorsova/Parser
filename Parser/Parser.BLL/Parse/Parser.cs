@@ -1,7 +1,8 @@
 ﻿using Parser.BLL.Models;
+using Parser.BLL.Parse.Interfaces;
 using System.Collections.Generic;
 
-namespace Parser.BLL
+namespace Parser.BLL.Parse
 {
     public class Parser: IParser
     {

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Parser.Configuration;
 using System;
+using Parser.BLL.Parse.Interfaces;
 
 namespace Parser
 {
