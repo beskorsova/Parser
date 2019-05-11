@@ -1,4 +1,5 @@
 ﻿using Parser.BLL.Models;
+using Parser.BLL.Options;
 using System;
 using System.Globalization;
 
@@ -6,10 +7,10 @@ namespace Parser.BLL
 {
     public class AccessLogLineParser: ILineParser
     {
-        private string[] excludedRoutes { get; set; }
-        public AccessLogLineParser(string[] excludedRoutes)
+        private ExcludeRule excludedRule;
+        public AccessLogLineParser(ExcludeRule excludedRule)
         {
-            this.excludedRoutes = excludedRoutes;
+            this.excludedRule = excludedRule;
         }
         public LogLineModel ParseLine(string line)
         {
@@ -47,7 +48,7 @@ namespace Parser.BLL
                     }
                 }
 
-                foreach (var excludedRoute in this.excludedRoutes)
+                foreach (var excludedRoute in this.excludedRule.Routes)
                 {
                     if (result.Route.EndsWith(excludedRoute))
                         return null;

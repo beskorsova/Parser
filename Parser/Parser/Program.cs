@@ -33,6 +33,17 @@ namespace Parser
                     System.Console.WriteLine(line);
                 }
             }
+            using (serviceProvider.CreateScope())
+            {
+                var repository = serviceProvider.GetService<IAsyncRepository>();
+                await repository.AddAsync(new LogLine()
+                {
+                    BytesSent = 1,
+                    Date = DateTime.Now,
+                    Host = "1",
+                    Route = "1"
+                });
+            }
 
         }
     }
