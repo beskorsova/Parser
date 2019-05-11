@@ -1,8 +1,8 @@
-﻿using Parser.BLL;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Parser.Configuration;
 using System;
 using Parser.BLL.Parse.Interfaces;
+using Parser.BLL.Services.Interfaces;
 
 namespace Parser
 {
@@ -31,6 +31,14 @@ namespace Parser
                 {
                     System.Console.WriteLine(line);
                 }
+            }
+
+            var logLineService = serviceProvider.GetService<IParserStoreService>();
+            using (serviceProvider.CreateScope())
+            {
+                await logLineService.CreateAsync(new BLL.DTO.LogLineDto
+                {
+                });
             }
 
         }

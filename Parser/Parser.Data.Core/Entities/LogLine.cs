@@ -10,6 +10,6 @@ namespace Parser.Data.Core.Entities
         public DateTime Date { get; set; }
         public int StatusResult { get; set; }
         public int? BytesSent { get; set; }
-      //  public virtual List<QueryParameter> Parameters { get; set; } = new List<QueryParameter>();
+        public virtual List<QueryParameter> Parameters { get; set; } = new List<QueryParameter>();
     }
 }
