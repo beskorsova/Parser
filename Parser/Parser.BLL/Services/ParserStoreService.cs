@@ -2,6 +2,7 @@
 using Parser.BLL.Models;
 using Parser.BLL.Services.Interfaces;
 using Parser.Data.Core.DataAccess;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Parser.BLL.Services
@@ -14,10 +15,14 @@ namespace Parser.BLL.Services
         {
             this.repository = repository;
         }
-        public async Task CreateAsync(LogLineModel logLineModel)
+        public async Task CreateAsync(IEnumerable<LogLineModel> logLinesModel)
         {
-            var logLine = logLineModel.ToLogLine();
-            await this.repository.AddAsync(logLine);
+            var logLines = logLinesModel.ToLogLines();
+            foreach(var logLine in logLines)
+            {
+                await this.repository.AddAsync(logLine);
+            }
+            await this.repository.SaveChangesAsync();
         }
     }
 }

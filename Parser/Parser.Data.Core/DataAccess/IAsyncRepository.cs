@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Parser.Data.Core.DataAccess
@@ -8,5 +7,7 @@ namespace Parser.Data.Core.DataAccess
     {
         Task AddAsync<T>(T entity, CancellationToken token = default(CancellationToken))
             where T : BaseEntity;
+
+        Task SaveChangesAsync();
     }
 }
