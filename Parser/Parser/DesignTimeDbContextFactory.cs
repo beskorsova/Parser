@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore.Design;
+using Parser.Configuration;
 using Parser.Data;
-using System.IO;
-using System.Reflection;
 
 namespace Parser
 {
@@ -11,15 +8,9 @@ namespace Parser
     {
         public ParserDbContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .AddUserSecrets(Assembly.GetExecutingAssembly())
-                .Build();
-            var builder = new DbContextOptionsBuilder<ParserDbContext>();
-            var connectionString = configuration.GetConnectionString("Default");
-            builder.UseSqlServer(connectionString);
-            return new ParserDbContext(builder.Options);
+            var resolver = new DependencyResolver();
+            return resolver.ServiceProvider.GetService(typeof(ParserDbContext)) as ParserDbContext;
+
         }
     }
 }

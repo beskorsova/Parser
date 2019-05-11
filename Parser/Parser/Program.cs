@@ -1,42 +1,19 @@
 ﻿using Parser.BLL;
 using Microsoft.Extensions.DependencyInjection;
 using Parser.Data.Core.DataAccess;
-using Parser.Data.DataAccess;
-using Parser.Data.Core.Entities;
-using Parser.Data;
+using Parser.Configuration;
 using System;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+using Parser.Data.Core.Entities;
 
 namespace Parser
 {
     class Program
     {
-        static ServiceProvider serviceProvider;
+        static IServiceProvider serviceProvider;
+
         static void Setup()
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json")
-               .AddUserSecrets(Assembly.GetExecutingAssembly())
-               .Build();
-
-            var services = new ServiceCollection();
-
-            services.
-                AddDbContext<ParserDbContext>(
-                    x => x.UseSqlServer(configuration.GetConnectionString("Default"))
-                ).
-                AddTransient<IParser, BLL.Parser>().
-                AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
-                    new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
-                AddTransient<ILogService, LogService>();
-
-            services.AddScoped<IAsyncRepository, AsyncRepository>();
-
-            serviceProvider = services.BuildServiceProvider();
+            serviceProvider = new DependencyResolver().ServiceProvider;
         }
 
         static async System.Threading.Tasks.Task Main(string[] args)

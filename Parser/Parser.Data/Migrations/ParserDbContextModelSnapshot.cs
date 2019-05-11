@@ -61,7 +61,7 @@ namespace Parser.Data.Migrations
 
             modelBuilder.Entity("Parser.Data.Core.Entities.QueryParameter", b =>
                 {
-                    b.HasOne("Parser.Data.Core.Entities.LogLine")
+                    b.HasOne("Parser.Data.Core.Entities.LogLine", "LogLine")
                         .WithMany("Parameters")
                         .HasForeignKey("LogLineId")
                         .OnDelete(DeleteBehavior.Cascade);
