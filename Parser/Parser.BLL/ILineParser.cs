@@ -4,6 +4,6 @@ namespace Parser.BLL
 {
     public interface ILineParser
     {
-        LogLine ParseLine(string line);
+        LogLineModel ParseLine(string line);
     }
 }

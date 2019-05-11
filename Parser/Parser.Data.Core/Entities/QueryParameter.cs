@@ -1,7 +1,10 @@
 ﻿namespace Parser.Data.Core.Entities
 {
-    public class QueryParameter : IEntity<int>
+    public class QueryParameter : BaseEntity
     {
-        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+
+        public long LogLineId { get; set; }
     }
 }

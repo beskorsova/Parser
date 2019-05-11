@@ -11,7 +11,7 @@ namespace Parser.BLL
         {
             this.lineParser = lineParser;
         }
-        public IEnumerable<LogLine> Parse(IEnumerable<string> fileLines)
+        public IEnumerable<LogLineModel> Parse(IEnumerable<string> fileLines)
         {
             foreach(var line in fileLines)
             {

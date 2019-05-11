@@ -1,21 +1,20 @@
 ﻿using Parser.BLL;
 using Microsoft.Extensions.DependencyInjection;
+using Parser.Configuration;
+using System;
 
 namespace Parser
 {
     class Program
     {
-        static ServiceProvider serviceProvider;
+        static IServiceProvider serviceProvider;
+
         static void Setup()
         {
-            serviceProvider = new ServiceCollection().
-                AddTransient<IParser, BLL.Parser>().
-                AddTransient<ILineParser, AccessLogLineParser>(x => new AccessLogLineParser(
-                    new[] { ".jpg", ".gif", ".png", ".css", ".js" })).
-                AddTransient<ILogService, LogService>().BuildServiceProvider();
+            serviceProvider = new DependencyResolver().ServiceProvider;
         }
 
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             Setup();
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -32,6 +31,7 @@ namespace Parser
                     System.Console.WriteLine(line);
                 }
             }
+
         }
     }
 }
