@@ -8,10 +8,14 @@ namespace Parser.BLL.Parse
 {
     public class AccessLogLineParser: ILineParser
     {
-        private ExcludeRule excludedRule;
-        public AccessLogLineParser(ExcludeRule excludedRule)
+        private ExcludeRuleOptions excludedRuleOptions;
+        private ILogLineParserHelper logLineParserHelper;
+
+        public AccessLogLineParser(ILogLineParserHelper logLineParserHelper,
+            ExcludeRuleOptions excludedRuleOptions)
         {
-            this.excludedRule = excludedRule;
+            this.excludedRuleOptions = excludedRuleOptions;
+            this.logLineParserHelper = logLineParserHelper;
         }
         public LogLineModel ParseLine(string line)
         {
@@ -19,13 +23,14 @@ namespace Parser.BLL.Parse
             var startIndex = 0;
             var endIndex = line.IndexOf(' ');
             result.Host = line.Substring(startIndex, endIndex - startIndex);
-
+            this.logLineParserHelper.SetGeolocation(result);
             startIndex = line.IndexOf(" - - [", endIndex) + 6;
             endIndex = line.IndexOf("]", startIndex);
             result.Date = DateTime.ParseExact(line.Substring(startIndex, endIndex - startIndex), "dd/MMM/yyyy:HH:mm:ss zzz", CultureInfo.InvariantCulture)
                 .ToUniversalTime();
             
             startIndex = line.IndexOf(" /", endIndex);
+
             if (startIndex != -1)
             {
                 startIndex += 1;
@@ -49,7 +54,7 @@ namespace Parser.BLL.Parse
                     }
                 }
 
-                foreach (var excludedRoute in this.excludedRule.Routes)
+                foreach (var excludedRoute in this.excludedRuleOptions.Routes)
                 {
                     if (result.Route.EndsWith(excludedRoute))
                         return null;

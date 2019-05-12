@@ -31,7 +31,7 @@ namespace Parser
             var logLineService = serviceProvider.GetService<IParserStoreService>();
             using (serviceProvider.CreateScope())
             {
-              await logLineService.CreateAsync(logLines.Where(x => x!=null));
+                await logLineService.CreateAsync(logLines);
             }
 
             System.Console.WriteLine(watch.ElapsedMilliseconds);

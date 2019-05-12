@@ -12,12 +12,18 @@ namespace Parser.BLL.Parse
         {
             this.lineParser = lineParser;
         }
-        public IEnumerable<LogLineModel> Parse(IEnumerable<string> fileLines)
+        public List<LogLineModel> Parse(IEnumerable<string> fileLines)
         {
-            foreach(var line in fileLines)
+            var result = new List<LogLineModel>();
+            foreach (var line in fileLines)
             {
-                yield return lineParser.ParseLine(line);
+                var parsedLine = lineParser.ParseLine(line);
+                if (parsedLine != null)
+                {
+                    result.Add(parsedLine);
+                }
             }
+            return result;
         }
     }
 }

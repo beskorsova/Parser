@@ -15,10 +15,11 @@ namespace Parser.BLL.Services
         {
             this.repository = repository;
         }
-        public async Task CreateAsync(IEnumerable<LogLineModel> logLinesModel)
+        
+        public async Task CreateAsync(List<LogLineModel> logLinesModel)
         {
             var logLines = logLinesModel.ToLogLines();
-            foreach(var logLine in logLines)
+            foreach (var logLine in logLines)
             {
                 await this.repository.AddAsync(logLine);
             }

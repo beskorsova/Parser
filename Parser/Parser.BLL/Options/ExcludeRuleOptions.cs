@@ -1,6 +1,6 @@
 ﻿namespace Parser.BLL.Options
 {
-    public class ExcludeRule
+    public class ExcludeRuleOptions
     {
         public string[] Routes { get; set; }
     }

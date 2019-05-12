@@ -22,8 +22,8 @@ namespace Parser.BLL.Mappings
             result.Parameters = dto.Parameters.Select(x => new QueryParameter { Name = x.Key, Value = x.Value }).ToList();
             return result;
         }
-
-        public static IEnumerable<LogLine> ToLogLines(this IEnumerable<LogLineModel> dtos)
+        
+        public static IEnumerable<LogLine> ToLogLines(this List<LogLineModel> dtos)
         {
             return dtos.Select(x => x.ToLogLine());
         }

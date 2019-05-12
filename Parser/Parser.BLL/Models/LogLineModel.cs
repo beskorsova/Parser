@@ -7,6 +7,7 @@ namespace Parser.BLL.Models
     {
         public DateTime Date { get; set; }
         public string Host { get; set; }
+        public string Country { get; set; }
         public string Route { get; set; }
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
         public int StatusResult { get; set; }

@@ -6,6 +6,6 @@ namespace Parser.BLL.Services.Interfaces
 {
     public interface IParserStoreService
     {
-        Task CreateAsync(IEnumerable<LogLineModel> logLinesModel);
+        Task CreateAsync(List<LogLineModel> logLineModel);
     }
 }

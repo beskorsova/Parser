@@ -18,6 +18,8 @@ namespace Parser.Configuration
     {
         public IServiceProvider ServiceProvider { get; }
 
+        public IConfiguration Configuration { get; protected set; }
+
         public DependencyResolver()
         {
             var services = new ServiceCollection();
@@ -27,32 +29,27 @@ namespace Parser.Configuration
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IConfigurationService, ConfigurationService>();
+            Configuration = new ConfigurationService().GetConfiguration();
             
-            services.Configure<ExcludeRule>(x =>
-            {
-                x.Routes = new string[] { ".jpg", ".gif", ".png", ".css", ".js" };
-            });
+            services.Configure<ExcludeRuleOptions>(Configuration.GetSection("ExcludeRule"));
+            services.Configure<GeolocationOptions>(Configuration.GetSection("Geolocation"));
 
+            var connectionString = Configuration.GetConnectionString("Default");
             services.
+                AddDbContext<ParserDbContext>(options =>
+                options.UseSqlServer(connectionString)).
                 AddTransient<IParser, BLL.Parse.Parser>().
-                AddTransient<ILineParser, AccessLogLineParser>(x =>
-                new AccessLogLineParser(x.GetService<IOptions<ExcludeRule>>().Value)).
+                AddTransient<ILogLineParserHelper, LogLineParserHelper>(provider => 
+                    new LogLineParserHelper(provider.GetService<IOptions<GeolocationOptions>>().Value)
+                ).
+                AddTransient<ILineParser, AccessLogLineParser>(provider =>
+                    new AccessLogLineParser(provider.GetService<ILogLineParserHelper>()
+                    ,provider.GetService<IOptions<ExcludeRuleOptions>>().Value)).
                 AddTransient<ILogService, LogService>();
 
             services.AddScoped<IAsyncRepository, AsyncRepository>();
 
             services.AddTransient<IParserStoreService, ParserStoreService>();
-
-            // Register ParserDbContext
-            services.AddScoped(provider =>
-            {
-                var configService = provider.GetService<IConfigurationService>();
-                var connectionString = configService.GetConfiguration().GetConnectionString("Default");
-                var optionsBuilder = new DbContextOptionsBuilder<ParserDbContext>();
-                optionsBuilder.UseSqlServer(connectionString);
-                return new ParserDbContext(optionsBuilder.Options);
-            });
         }
     }
 }
