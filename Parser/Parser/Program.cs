@@ -3,7 +3,6 @@ using Parser.Configuration;
 using System;
 using Parser.BLL.Parse.Interfaces;
 using Parser.BLL.Services.Interfaces;
-using System.Linq;
 
 namespace Parser
 {
