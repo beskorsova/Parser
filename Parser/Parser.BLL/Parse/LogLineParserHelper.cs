@@ -30,7 +30,7 @@ namespace Parser.BLL.Parse
                         String.Format(geolocationOptions.Uri, ip, geolocationOptions.AccessKey);
                         var json = await client.DownloadStringTaskAsync(
                             new Uri(uri));
-                        logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName].ToString();
+                        logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName]?.ToString();
                     }
                 }
                 catch(SocketException) { }
