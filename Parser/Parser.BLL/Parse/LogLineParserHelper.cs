@@ -1,13 +1,20 @@
 ﻿using Newtonsoft.Json.Linq;
 using Parser.BLL.Models;
+using Parser.BLL.Options;
 using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace Parser.BLL.Parse
 {
     public class LogLineParserHelper: ILogLineParserHelper
     {
+        private GeolocationOptions geolocationOptions { get; set; }
+        public LogLineParserHelper(GeolocationOptions geolocationOptions)
+        {
+            this.geolocationOptions = geolocationOptions;
+        }
         public void SetGeolocation(LogLineModel logLine)
         {
             Dns.BeginGetHostAddresses(logLine.Host, async (x) =>
@@ -18,12 +25,15 @@ namespace Parser.BLL.Parse
 
                     using (var client = new WebClient())
                     {
-                        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{ip}?access_key=206b55680e755639e267360b4f15ba1f&format=1"));
-                        logLine.Country = JObject.Parse(json)["country_name"].ToString();
+                        var uri = geolocationOptions.AccessKey == "" ?
+                        String.Format(geolocationOptions.Uri, ip) :
+                        String.Format(geolocationOptions.Uri, ip, geolocationOptions.AccessKey);
+                        var json = await client.DownloadStringTaskAsync(
+                            new Uri(uri));
+                        logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName].ToString();
                     }
-
                 }
-                catch { }
+                catch(SocketException) { }
             }, null);
         }
     }

@@ -31,20 +31,20 @@ namespace Parser.Configuration
         {
             Configuration = new ConfigurationService().GetConfiguration();
             
-            services.Configure<ExcludeRule>(x =>
-            {
-                x.Routes = new string[] { ".jpg", ".gif", ".png", ".css", ".js" };
-            });
-            
+            services.Configure<ExcludeRuleOptions>(Configuration.GetSection("ExcludeRule"));
+            services.Configure<GeolocationOptions>(Configuration.GetSection("Geolocation"));
+
             var connectionString = Configuration.GetConnectionString("Default");
             services.
                 AddDbContext<ParserDbContext>(options =>
                 options.UseSqlServer(connectionString)).
                 AddTransient<IParser, BLL.Parse.Parser>().
-                AddTransient<ILogLineParserHelper, LogLineParserHelper>().
-                AddTransient<ILineParser, AccessLogLineParser>(x =>
-                new AccessLogLineParser(x.GetService<ILogLineParserHelper>()
-                ,x.GetService<IOptions<ExcludeRule>>().Value)).
+                AddTransient<ILogLineParserHelper, LogLineParserHelper>(provider => 
+                    new LogLineParserHelper(provider.GetService<IOptions<GeolocationOptions>>().Value)
+                ).
+                AddTransient<ILineParser, AccessLogLineParser>(provider =>
+                    new AccessLogLineParser(provider.GetService<ILogLineParserHelper>()
+                    ,provider.GetService<IOptions<ExcludeRuleOptions>>().Value)).
                 AddTransient<ILogService, LogService>();
 
             services.AddScoped<IAsyncRepository, AsyncRepository>();

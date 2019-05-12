@@ -1,22 +1,20 @@
-﻿using Newtonsoft.Json.Linq;
-using Parser.BLL.Models;
+﻿using Parser.BLL.Models;
 using Parser.BLL.Options;
 using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Globalization;
-using System.Net;
 
 namespace Parser.BLL.Parse
 {
     public class AccessLogLineParser: ILineParser
     {
-        private ExcludeRule excludedRule;
+        private ExcludeRuleOptions excludedRuleOptions;
         private ILogLineParserHelper logLineParserHelper;
 
         public AccessLogLineParser(ILogLineParserHelper logLineParserHelper,
-            ExcludeRule excludedRule)
+            ExcludeRuleOptions excludedRuleOptions)
         {
-            this.excludedRule = excludedRule;
+            this.excludedRuleOptions = excludedRuleOptions;
             this.logLineParserHelper = logLineParserHelper;
         }
         public LogLineModel ParseLine(string line)
@@ -56,7 +54,7 @@ namespace Parser.BLL.Parse
                     }
                 }
 
-                foreach (var excludedRoute in this.excludedRule.Routes)
+                foreach (var excludedRoute in this.excludedRuleOptions.Routes)
                 {
                     if (result.Route.EndsWith(excludedRoute))
                         return null;
