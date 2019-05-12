@@ -25,6 +25,16 @@ namespace Parser.BLL.Services
             await this.repository.SaveChangesAsync();
         }
 
+        public async Task CreateAsync(List<LogLineModel> logLinesModel)
+        {
+            var logLines = logLinesModel.ToLogLines();
+            foreach (var logLine in logLines)
+            {
+                await this.repository.AddAsync(logLine);
+            }
+            await this.repository.SaveChangesAsync();
+        }
+
         public void Create(IEnumerable<Task<LogLineModel>> logLinesModel)
         {
             var logLines = logLinesModel.ToLogLines();

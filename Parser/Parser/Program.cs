@@ -63,7 +63,7 @@ namespace Parser
 
                 }
               
-                logLineService.Create(logLines.Where(x=>x!=null).ToList());
+                await logLineService.CreateAsync(logLines.Where(x=>x!=null).ToList());
             }
 
             System.Console.WriteLine(watch.ElapsedMilliseconds);
