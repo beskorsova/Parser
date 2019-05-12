@@ -1,4 +1,5 @@
-﻿using Parser.BLL.Models;
+﻿using Newtonsoft.Json.Linq;
+using Parser.BLL.Models;
 using Parser.BLL.Options;
 using Parser.BLL.Parse.Interfaces;
 using System;
@@ -22,69 +23,34 @@ namespace Parser.BLL.Parse
             var startIndex = 0;
             var endIndex = line.IndexOf(' ');
             result.Host = line.Substring(startIndex, endIndex - startIndex);
+            
+            var r = Dns.BeginGetHostAddresses(result.Host, async (x) =>
+            {
+                //if (x.CompletedSynchronously)
+                //    return;
+                //else
+                try
+                {
+                    IPAddress[] addresses = Dns.EndGetHostAddresses(x);
+                    IPAddress address = addresses[0];
+                    var id = address?.MapToIPv6().ToString();
 
-            //try
-            //{
-            //    var ip = Dns.GetHostAddresses(result.Host)[0].MapToIPv6().ToString();
-            //    using (var client = new WebClient())
-            //    {
-            //        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{ip}?access_key=805170c69503aee187ba6c5d2a5cf59c&format=1"));
-            //        result.Country = json;
-            //    }
-            //}
-            //catch { }
+                    using (var client = new WebClient())
+                    {
+                        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{id}?access_key=0b4d5e049204104a60c1fba59c2b23a6&format=1"));
+                        result.Country = JObject.Parse(json)["country_name"].ToString();
+                    }
 
-            //var res = Dns.BeginGetHostAddresses(result.Host, x => Thread.Sleep(1000), null);
-
-            //var r = Dns.BeginGetHostAddresses(result.Host, async (x) =>
-            //{
-            //    //if (x.CompletedSynchronously)
-            //    //    return;
-            //    //else
-            //        try
-            //     {
-            //         // Thread.Sleep(10000);
-            //         IPAddress[] addresses = Dns.EndGetHostAddresses(x);
-            //         //  Thread.Sleep(10000);
-            //         IPAddress address = addresses[0];
-            //         var id = address?.MapToIPv6().ToString();
-
-            //            using (var client = new WebClient())
-            //            {
-            //                var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{id}?access_key=805170c69503aee187ba6c5d2a5cf59c&format=1"));
-            //                result.Country = json;
-            //            }
-
-            //        }
-            //     catch { }
-            // }, null);
-
-            //if (r.CompletedSynchronously)
-            //{
-            //    IPAddress[] addresses = Dns.EndGetHostAddresses(r);
-            //    IPAddress address = addresses[0];
-            //    var id = address?.MapToIPv6().ToString();
-
-            //    using (var client = new WebClient())
-            //    {
-            //        var json = client.DownloadString(new Uri($"http://ip-api.com/json/{id}"));
-            //        result.Country = json;
-            //    }
-            //}
+                }
+                catch { }
+            }, null);
+            
             startIndex = line.IndexOf(" - - [", endIndex) + 6;
             endIndex = line.IndexOf("]", startIndex);
             result.Date = DateTime.ParseExact(line.Substring(startIndex, endIndex - startIndex), "dd/MMM/yyyy:HH:mm:ss zzz", CultureInfo.InvariantCulture)
                 .ToUniversalTime();
             
             startIndex = line.IndexOf(" /", endIndex);
-
-            //try
-            //{
-            //    var addresses = Dns.EndGetHostAddresses(res);
-            //    IPAddress address = addresses[0];
-            //    result.Country = address?.MapToIPv6().ToString();
-            //}
-            //catch { }
 
             if (startIndex != -1)
             {
@@ -128,13 +94,5 @@ namespace Parser.BLL.Parse
             }
             return result;
         }
-        //protected internal void ResolvedAddressCallback(IPAddress address)
-        //{
-        //    var g = address.MapToIPv6();
-        //}
-        //private void GetCountry(string host, AsyncCallback d)
-        //{
-        //  Dns.BeginGetHostAddresses(host, d, null);
-        //}
     }
 }

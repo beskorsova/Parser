@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Parser
 {
@@ -44,20 +46,20 @@ namespace Parser
                             var ip = Dns.GetHostAddresses(logLine.Host)[0].MapToIPv4().ToString();
                             using (var client = new WebClient())
                             {
-                                var json = client.DownloadString($"http://api.ipstack.com/{ip}?access_key=805170c69503aee187ba6c5d2a5cf59c&format=1");
-                                logLine.Country = json;
+                                var json = client.DownloadString($"http://api.ipstack.com/{ip}?access_key=0b4d5e049204104a60c1fba59c2b23a6&format=1");
+                                logLine.Country = JObject.Parse(json)["country_name"].ToString();
                             }
                         }
                         catch
                         {
                         }
                     });
-                    thread.Start();
+                   // thread.Start();
 
-                    foreach (var th in threads)
-                    {
-                        th.Join();
-                    }
+                    //foreach (var th in threads)
+                    //{
+                    //    th.Join();
+                    //}
 
                 }
               
