@@ -1,7 +1,6 @@
 ﻿using Parser.BLL.Models;
 using Parser.BLL.Parse.Interfaces;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Parser.BLL.Parse
 {
@@ -13,14 +12,15 @@ namespace Parser.BLL.Parse
         {
             this.lineParser = lineParser;
         }
-        public List<LogLineModel> ParseAsync(IEnumerable<string> fileLines)
+        public List<LogLineModel> Parse(IEnumerable<string> fileLines)
         {
-            var lines = new List<LogLineModel>();
+            var result = new List<LogLineModel>();
             foreach (var line in fileLines)
             {
-                lines.Add(lineParser.ParseLineAsync(line));
+                var parsedLine = lineParser.ParseLine(line);
+                if(parsedLine!=null) result.Add(parsedLine);
             }
-            return lines;
+            return result;
         }
     }
 }

@@ -5,8 +5,6 @@ using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Globalization;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Parser.BLL.Parse
 {
@@ -17,7 +15,7 @@ namespace Parser.BLL.Parse
         {
             this.excludedRule = excludedRule;
         }
-        public LogLineModel ParseLineAsync(string line)
+        public LogLineModel ParseLine(string line)
         {
             var result = new LogLineModel();
             var startIndex = 0;
@@ -37,7 +35,7 @@ namespace Parser.BLL.Parse
 
                     using (var client = new WebClient())
                     {
-                        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{id}?access_key=0b4d5e049204104a60c1fba59c2b23a6&format=1"));
+                        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{id}?access_key=206b55680e755639e267360b4f15ba1f&format=1"));
                         result.Country = JObject.Parse(json)["country_name"].ToString();
                     }
 

@@ -6,9 +6,15 @@ namespace Parser.BLL.Services
 {
     public class LogService: ILogService
     {
-        public string[] ReadLog(string filePath)
+        public IEnumerable<string> ReadLog(string filePath)
         {
-            return File.ReadAllLines(filePath);
+            using (var reader = new StreamReader(filePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    yield return reader.ReadLine();
+                }
+            }
         }
     }
 }

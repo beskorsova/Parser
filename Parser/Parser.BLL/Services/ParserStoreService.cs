@@ -15,16 +15,7 @@ namespace Parser.BLL.Services
         {
             this.repository = repository;
         }
-        public async Task CreateAsync(IEnumerable<Task<LogLineModel>> logLinesModel)
-        {
-            var logLines = logLinesModel.ToLogLines();
-            foreach (var logLine in logLines)
-            {
-                await this.repository.AddAsync(logLine);
-            }
-            await this.repository.SaveChangesAsync();
-        }
-
+        
         public async Task CreateAsync(List<LogLineModel> logLinesModel)
         {
             var logLines = logLinesModel.ToLogLines();
@@ -33,41 +24,6 @@ namespace Parser.BLL.Services
                 await this.repository.AddAsync(logLine);
             }
             await this.repository.SaveChangesAsync();
-        }
-
-        public void Create(IEnumerable<Task<LogLineModel>> logLinesModel)
-        {
-            var logLines = logLinesModel.ToLogLines();
-            foreach (var logLine in logLines)
-            {
-                this.repository.Add(logLine);
-            }
-            this.repository.SaveChanges();
-        }
-
-        public void Create(List<LogLineModel> logLinesModel)
-        {
-            var logLines = logLinesModel.ToLogLines();
-            foreach (var logLine in logLines)
-            {
-                this.repository.Add(logLine);
-            }
-            this.repository.SaveChanges();
-        }
-
-        public void Create(LogLineModel logLineModel)
-        {
-            var logLine = logLineModel.ToLogLine();
-            //foreach(var logLine in logLines)
-            //{
-            this.repository.Add(logLine);
-            // }
-           //  this.repository.SaveChanges();
-        }
-
-        public void SaveChanges()
-        {
-            this.repository.SaveChanges();
         }
     }
 }

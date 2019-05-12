@@ -4,6 +4,6 @@ namespace Parser.BLL.Services.Interfaces
 {
     public interface ILogService
     {
-        string[] ReadLog(string filePath);
+        IEnumerable<string> ReadLog(string filePath);
     }
 }
