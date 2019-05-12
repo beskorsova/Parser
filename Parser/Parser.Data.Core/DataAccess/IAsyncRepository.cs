@@ -9,5 +9,10 @@ namespace Parser.Data.Core.DataAccess
             where T : BaseEntity;
 
         Task SaveChangesAsync();
+
+        void Add<T>(T entity)
+    where T : BaseEntity;
+
+        void SaveChanges();
     }
 }

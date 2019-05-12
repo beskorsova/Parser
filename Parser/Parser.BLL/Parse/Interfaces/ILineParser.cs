@@ -1,9 +1,10 @@
 ﻿using Parser.BLL.Models;
+using System.Threading.Tasks;
 
 namespace Parser.BLL.Parse.Interfaces
 {
     public interface ILineParser
     {
-        LogLineModel ParseLine(string line);
+        LogLineModel ParseLineAsync(string line);
     }
 }

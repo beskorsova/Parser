@@ -4,6 +4,9 @@ using System;
 using Parser.BLL.Parse.Interfaces;
 using Parser.BLL.Services.Interfaces;
 using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Parser
 {
@@ -24,14 +27,41 @@ namespace Parser
             var logService = serviceProvider.GetService<ILogService>();
             var parser = serviceProvider.GetService<IParser>();
             var log = logService.ReadLog("access_log");
-            var logLines = parser.Parse(log);
+            var logLines = parser.ParseAsync(log);
 
             System.Console.WriteLine(watch.ElapsedMilliseconds);
 
             var logLineService = serviceProvider.GetService<IParserStoreService>();
             using (serviceProvider.CreateScope())
             {
-              await logLineService.CreateAsync(logLines.Where(x => x!=null));
+               var threads = new List<Thread>();
+               foreach(var logLine in logLines.Where(x=>x!=null))
+                {
+                    var thread = new Thread(() =>
+                    {
+                        try
+                        {
+                            var ip = Dns.GetHostAddresses(logLine.Host)[0].MapToIPv4().ToString();
+                            using (var client = new WebClient())
+                            {
+                                var json = client.DownloadString($"http://api.ipstack.com/{ip}?access_key=805170c69503aee187ba6c5d2a5cf59c&format=1");
+                                logLine.Country = json;
+                            }
+                        }
+                        catch
+                        {
+                        }
+                    });
+                    thread.Start();
+
+                    foreach (var th in threads)
+                    {
+                        th.Join();
+                    }
+
+                }
+              
+                logLineService.Create(logLines.Where(x=>x!=null).ToList());
             }
 
             System.Console.WriteLine(watch.ElapsedMilliseconds);
