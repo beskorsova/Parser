@@ -18,7 +18,10 @@ namespace Parser.BLL.Parse
             foreach (var line in fileLines)
             {
                 var parsedLine = lineParser.ParseLine(line);
-                if(parsedLine!=null) result.Add(parsedLine);
+                if (parsedLine != null)
+                {
+                    result.Add(parsedLine);
+                }
             }
             return result;
         }

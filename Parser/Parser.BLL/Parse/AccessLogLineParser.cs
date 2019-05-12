@@ -11,9 +11,13 @@ namespace Parser.BLL.Parse
     public class AccessLogLineParser: ILineParser
     {
         private ExcludeRule excludedRule;
-        public AccessLogLineParser(ExcludeRule excludedRule)
+        private ILogLineParserHelper logLineParserHelper;
+
+        public AccessLogLineParser(ILogLineParserHelper logLineParserHelper,
+            ExcludeRule excludedRule)
         {
             this.excludedRule = excludedRule;
+            this.logLineParserHelper = logLineParserHelper;
         }
         public LogLineModel ParseLine(string line)
         {
@@ -21,28 +25,7 @@ namespace Parser.BLL.Parse
             var startIndex = 0;
             var endIndex = line.IndexOf(' ');
             result.Host = line.Substring(startIndex, endIndex - startIndex);
-            
-            var r = Dns.BeginGetHostAddresses(result.Host, async (x) =>
-            {
-                //if (x.CompletedSynchronously)
-                //    return;
-                //else
-                try
-                {
-                    IPAddress[] addresses = Dns.EndGetHostAddresses(x);
-                    IPAddress address = addresses[0];
-                    var id = address?.MapToIPv6().ToString();
-
-                    using (var client = new WebClient())
-                    {
-                        var json = await client.DownloadStringTaskAsync(new Uri($"http://api.ipstack.com/{id}?access_key=206b55680e755639e267360b4f15ba1f&format=1"));
-                        result.Country = JObject.Parse(json)["country_name"].ToString();
-                    }
-
-                }
-                catch { }
-            }, null);
-            
+            this.logLineParserHelper.SetGeolocation(result);
             startIndex = line.IndexOf(" - - [", endIndex) + 6;
             endIndex = line.IndexOf("]", startIndex);
             result.Date = DateTime.ParseExact(line.Substring(startIndex, endIndex - startIndex), "dd/MMM/yyyy:HH:mm:ss zzz", CultureInfo.InvariantCulture)
