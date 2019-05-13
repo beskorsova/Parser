@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Parser.Api.Model.Filters;
+using Parser.Data.Core.DataAccess;
 using Parser.Data.Core.Entities;
-using Parser.Data.Core.Infrastructure;
 
 namespace Parser.Api.Controllers
 {
@@ -10,16 +11,16 @@ namespace Parser.Api.Controllers
     [ApiController]
     public class LogLinesController : ControllerBase
     {
-        private readonly LogLineRepository logLineRepository;
-        public LogLinesController(LogLineRepository logLineRepository)
+        private readonly ILogLineRepository logLineRepository;
+        public LogLinesController(ILogLineRepository logLineRepository)
         {
             this.logLineRepository = logLineRepository;
         }
 
         [HttpGet]
-        public async System.Threading.Tasks.Task<ActionResult<List<LogLine>>> GetAsync()
+        public async Task<ActionResult<List<LogLine>>> GetAsync([FromQuery] TopFilterModel filterModel)
         {
-            return await this.logLineRepository.GetTop();
+            return await this.logLineRepository.GetTop(filterModel.N, filterModel.Start.Value, filterModel.End.Value);
         }
         
         [HttpGet("{id}")]

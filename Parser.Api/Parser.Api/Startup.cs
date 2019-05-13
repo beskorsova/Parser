@@ -21,7 +21,7 @@ namespace Parser.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IParserConnection>(sp => new ParserConnection(Configuration.GetConnectionString("Default")));
-            services.AddScoped<LogLineRepository, LogLineRepository>();
+            services.AddScoped<ILogLineRepository, LogLineRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
