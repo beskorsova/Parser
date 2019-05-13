@@ -10,8 +10,8 @@ namespace Parser.BLL.Parse
 {
     public class LogLineParserHelper: ILogLineParserHelper
     {
-        private GeolocationOptions geolocationOptions;
-        private ExcludeRuleOptions excludedRuleOptions;
+        private readonly GeolocationOptions geolocationOptions;
+        private readonly ExcludeRuleOptions excludedRuleOptions;
 
         public LogLineParserHelper(GeolocationOptions geolocationOptions,
             ExcludeRuleOptions excludedRuleOptions)

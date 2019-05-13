@@ -6,7 +6,7 @@ namespace Parser.BLL.Parse
 {
     public class AccessLogLineParser : LineParserBase
     {
-        private ILogLineParserHelper logLineParserHelper;
+        private readonly ILogLineParserHelper logLineParserHelper;
         private readonly string dateFormat = "dd/MMM/yyyy:HH:mm:ss zzz";
         
         public AccessLogLineParser(ILogLineParserHelper logLineParserHelper)

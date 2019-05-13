@@ -27,7 +27,7 @@ namespace Parser
             var log = logService.ReadLog(filePath);
             var logLines = parser.Parse(log);
 
-            System.Console.WriteLine($"Parsing: {watch.ElapsedMilliseconds} ElapsedMilliseconds");
+            Console.WriteLine($"Parsing: {watch.ElapsedMilliseconds} ElapsedMilliseconds");
 
             var logLineService = serviceProvider.GetService<IParserStoreService>();
             using (serviceProvider.CreateScope())
@@ -35,7 +35,9 @@ namespace Parser
                 await logLineService.CreateAsync(logLines);
             }
 
-            System.Console.WriteLine($"Saving: {watch.ElapsedMilliseconds} ElapsedMilliseconds");
+            Console.WriteLine($"Saving: {watch.ElapsedMilliseconds} ElapsedMilliseconds");
+
+            Console.WriteLine("Parsed log was successfully saved");
 
         }
     }

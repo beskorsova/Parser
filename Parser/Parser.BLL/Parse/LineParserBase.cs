@@ -55,15 +55,15 @@ namespace Parser.BLL.Parse
             }
         }
 
-        protected Dictionary<LinePartEnum, LinePartParser> linePartParsers
-            = new Dictionary<LinePartEnum, LinePartParser>();
-
-        protected Dictionary<int, LinePartEnum> linePartIndicators = new Dictionary<int, LinePartEnum>();
+        protected readonly Dictionary<LinePartEnum, LinePartParser> linePartParsers;
+        protected readonly Dictionary<int, LinePartEnum> linePartIndicators;
         protected LineIndexer Indexer { get; private set; }
 
         protected LineParserBase()
         {
             this.Indexer = new LineIndexer();
+            linePartParsers = new Dictionary<LinePartEnum, LinePartParser>();
+            linePartIndicators = new Dictionary<int, LinePartEnum>();
         }
 
         public LogLineModel ParseLine(string line)
