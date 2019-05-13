@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Parser.Bl.Services;
 using Parser.Core.Interfaces;
 using Parser.Data.Core.DataAccess;
-using Parser.Data.Core.Infrastructure;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 

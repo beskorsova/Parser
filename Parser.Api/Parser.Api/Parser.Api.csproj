@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Parser.Bl\Parser.Bl.csproj" />
     <ProjectReference Include="..\Parser.Core\Parser.Core.csproj" />
     <ProjectReference Include="..\Parser.Data.Core\Parser.Data.Core.csproj" />
+    <ProjectReference Include="..\Parser.Data\Parser.Data.csproj" />
   </ItemGroup>
 
 </Project>

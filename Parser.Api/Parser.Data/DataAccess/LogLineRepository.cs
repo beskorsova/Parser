@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Parser.Data.Core.DataAccess;
 using Parser.Data.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Parser.Data.Core.Infrastructure
+namespace Parser.Data.Core.DataAccess
 {
     public class LogLineRepository : AsyncRepository, ILogLineRepository
     {

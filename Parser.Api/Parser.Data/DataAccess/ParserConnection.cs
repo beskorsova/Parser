@@ -1,8 +1,7 @@
-﻿using Parser.Data.Core.DataAccess;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace Parser.Data.Core.Infrastructure
+namespace Parser.Data.Core.DataAccess
 {
     public class ParserConnection : IParserConnection
     {
