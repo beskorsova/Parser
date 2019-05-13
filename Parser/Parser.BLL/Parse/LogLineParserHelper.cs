@@ -40,7 +40,7 @@ namespace Parser.BLL.Parse
 
                     using (var client = new WebClient())
                     {
-                        var uri = geolocationOptions.AccessKey == "" ?
+                        var uri = geolocationOptions.AccessKey == string.Empty ?
                         String.Format(geolocationOptions.Uri, ip) :
                         String.Format(geolocationOptions.Uri, ip, geolocationOptions.AccessKey);
                         var json = await client.DownloadStringTaskAsync(
