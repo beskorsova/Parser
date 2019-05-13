@@ -21,21 +21,21 @@ namespace Parser.Api.Controllers
         [HttpGet("topHosts")]
         public async Task<ActionResult<List<string>>> GetTopHostsAsync([FromQuery] TopFilterModel filterModel)
         {
-            return (await this.logLineRepository.GetTopHosts(filterModel.N, filterModel.Start.Value, filterModel.End.Value))
+            return (await this.logLineRepository.GetTopHosts(filterModel.N, filterModel.Start, filterModel.End))
                 .Select(x=>x.Host).ToList();
         }
 
         [HttpGet("topRoutes")]
         public async Task<ActionResult<List<string>>> GetTopRoutesAsync([FromQuery] TopFilterModel filterModel)
         {
-            return (await this.logLineRepository.GetTopRoutes(filterModel.N, filterModel.Start.Value, filterModel.End.Value))
+            return (await this.logLineRepository.GetTopRoutes(filterModel.N, filterModel.Start, filterModel.End))
                  .Select(x => x.Host).ToList();
         }
 
         [HttpGet]
         public async Task<ActionResult<List<LogLine>>> GetAll([FromQuery] TableFilterModel filterModel)
         {
-            return await this.logLineRepository.GetAll(filterModel.Start.Value, filterModel.End.Value, filterModel.Offset, filterModel.Limit);
+            return await this.logLineRepository.GetAll(filterModel.Start, filterModel.End, filterModel.Offset, filterModel.Limit);
         }
         
     }

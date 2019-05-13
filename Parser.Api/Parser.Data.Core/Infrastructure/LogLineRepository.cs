@@ -11,18 +11,31 @@ namespace Parser.Data.Core.Infrastructure
 {
     public class LogLineRepository : AsyncRepository, ILogLineRepository
     {
+        private readonly string datePeriodFilter;
         public LogLineRepository(IParserConnection connection) : base(connection)
         {
+            this.datePeriodFilter = "WHERE Date >= @Start AND Date <= @End ";
         }
 
-        public Task<List<LogLine>> GetAll(DateTime start, DateTime end, int offset, int limit = 10, CancellationToken token = default(CancellationToken))
+        private string GetDateFilter(DateTime? start, DateTime? end)
+        {
+            if(start == null || end == null)
+            {
+                return string.Empty;
+            }
+            return this.datePeriodFilter;
+        }
+
+        public Task<List<LogLine>> GetAll(DateTime? start, DateTime? end, int offset, int limit = 10, CancellationToken token = default(CancellationToken))
         {
 
             var lookup = new Dictionary<long, LogLine>();
             return this.RunAsync(async (dbConnection) =>
                (await dbConnection.QueryAsync<LogLine, QueryParameter, LogLine>
                  (
-                     "SELECT l.*, qp.* FROM LogLines l inner join QueryParameters qp on l.Id = qp.LogLineId ORDER BY l.Date ASC " +
+                     "SELECT l.*, qp.* FROM LogLines l inner join QueryParameters qp on l.Id = qp.LogLineId " +
+                     this.GetDateFilter(start, end) +
+                     "ORDER BY l.Date ASC " +
                      "OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
                       (l, qp) => {
                          LogLine logLine;
@@ -32,29 +45,31 @@ namespace Parser.Data.Core.Infrastructure
                          }
                          logLine.Parameters.Add(qp);
                          return logLine;
-                     }, new { Offset = offset, Limit = limit })).ToList());
+                     }, new { Offset = offset, Limit = limit, Start = start??default(DateTime), End = end??default(DateTime) })).ToList());
         }
 
-        public Task<List<LogLine>> GetTopHosts(int n, DateTime start, DateTime end,
+        public Task<List<LogLine>> GetTopHosts(int n, DateTime? start, DateTime? end,
             CancellationToken token = default(CancellationToken))
         {
             return this.RunAsync(async (dbConnection) =>
               (await dbConnection.QueryAsync<LogLine>
                 (new CommandDefinition(
-                    "SELECT TOP (@N) l.Host FROM LogLines l WHERE Date >= @Start AND Date <= @End " +
+                    "SELECT TOP (@N) l.Host FROM LogLines l " +
+                    this.GetDateFilter(start, end) +
                     "GROUP BY l.Host ORDER BY COUNT(*) DESC",
-                    new { N = n, Start = start, End = end },
+                    new { N = n, Start = start ?? default(DateTime), End = end ?? default(DateTime) },
                     cancellationToken: token))).ToList());
         }
 
-        public Task<List<LogLine>> GetTopRoutes(int n, DateTime start, DateTime end, CancellationToken token = default(CancellationToken))
+        public Task<List<LogLine>> GetTopRoutes(int n, DateTime? start, DateTime? end, CancellationToken token = default(CancellationToken))
         {
             return this.RunAsync(async (dbConnection) =>
               (await dbConnection.QueryAsync<LogLine>
                 (new CommandDefinition(
-                    "SELECT TOP (@N) l.Route FROM LogLines l WHERE Date >= @Start AND Date <= @End " +
+                    "SELECT TOP (@N) l.Route FROM LogLines l " +
+                    this.GetDateFilter(start, end) +
                     "GROUP BY l.Host ORDER BY COUNT(*) DESC",
-                    new { N = n, Start = start, End = end },
+                    new { N = n, Start = start ?? default(DateTime), End = end ?? default(DateTime) },
                     cancellationToken: token))).ToList());
         }
     }
