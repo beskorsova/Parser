@@ -6,9 +6,9 @@ namespace Parser.BLL.Parse
 {
     public class Parser: IParser
     {
-        private ILineParser lineParser { get; set; }
+        private LineParserBase lineParser { get; set; }
 
-        public Parser(ILineParser lineParser)
+        public Parser(LineParserBase lineParser)
         {
             this.lineParser = lineParser;
         }
