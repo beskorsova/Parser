@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Parser.Api.Model.Filters;
@@ -17,16 +18,24 @@ namespace Parser.Api.Controllers
             this.logLineRepository = logLineRepository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<LogLine>>> GetAsync([FromQuery] TopFilterModel filterModel)
+        [HttpGet("topHosts")]
+        public async Task<ActionResult<List<string>>> GetTopHostsAsync([FromQuery] TopFilterModel filterModel)
         {
-            return await this.logLineRepository.GetTop(filterModel.N, filterModel.Start.Value, filterModel.End.Value);
+            return (await this.logLineRepository.GetTopHosts(filterModel.N, filterModel.Start.Value, filterModel.End.Value))
+                .Select(x=>x.Host).ToList();
         }
-        
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+
+        [HttpGet("topRoutes")]
+        public async Task<ActionResult<List<string>>> GetTopRoutesAsync([FromQuery] TopFilterModel filterModel)
         {
-            return "value";
+            return (await this.logLineRepository.GetTopRoutes(filterModel.N, filterModel.Start.Value, filterModel.End.Value))
+                 .Select(x => x.Host).ToList();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<LogLine>>> GetAll([FromQuery] TopFilterModel filterModel)
+        {
+            return await this.logLineRepository.GetAll(filterModel.Start.Value, filterModel.End.Value, 0);
         }
         
     }
