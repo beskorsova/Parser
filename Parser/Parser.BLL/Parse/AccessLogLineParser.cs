@@ -1,5 +1,4 @@
-﻿using Parser.BLL.Options;
-using Parser.BLL.Parse.Interfaces;
+﻿using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Globalization;
 
@@ -7,14 +6,11 @@ namespace Parser.BLL.Parse
 {
     public class AccessLogLineParser : LineParserBase
     {
-        private ExcludeRuleOptions excludedRuleOptions;
         private ILogLineParserHelper logLineParserHelper;
         private readonly string dateFormat = "dd/MMM/yyyy:HH:mm:ss zzz";
         
-        public AccessLogLineParser(ILogLineParserHelper logLineParserHelper,
-            ExcludeRuleOptions excludedRuleOptions)
+        public AccessLogLineParser(ILogLineParserHelper logLineParserHelper)
         {
-            this.excludedRuleOptions = excludedRuleOptions;
             this.logLineParserHelper = logLineParserHelper;
 
             this.linePartParsers.Add(LinePartEnum.Host, new LinePartParser((line, model) =>
@@ -46,12 +42,7 @@ namespace Parser.BLL.Parse
                 (model) =>
                 {
                     if (model.Route == null) return true;
-                    foreach (var excludedRoute in this.excludedRuleOptions.Routes)
-                    {
-                        if (model.Route.ToUpper().EndsWith(excludedRoute.ToUpper()))
-                            return false;
-                    }
-                    return true;
+                    return this.logLineParserHelper.CheckRoute(model);
                 }));
 
             this.linePartParsers.Add(LinePartEnum.Parameters, new LinePartParser((line, model) =>

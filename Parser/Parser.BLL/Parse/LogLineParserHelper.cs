@@ -10,11 +10,26 @@ namespace Parser.BLL.Parse
 {
     public class LogLineParserHelper: ILogLineParserHelper
     {
-        private GeolocationOptions geolocationOptions { get; set; }
-        public LogLineParserHelper(GeolocationOptions geolocationOptions)
+        private GeolocationOptions geolocationOptions;
+        private ExcludeRuleOptions excludedRuleOptions;
+
+        public LogLineParserHelper(GeolocationOptions geolocationOptions,
+            ExcludeRuleOptions excludedRuleOptions)
         {
             this.geolocationOptions = geolocationOptions;
+            this.excludedRuleOptions = excludedRuleOptions;
         }
+
+        public bool CheckRoute(LogLineModel logLine)
+        {
+            foreach (var excludedRoute in this.excludedRuleOptions.Routes)
+            {
+                if (logLine.Route.ToUpper().EndsWith(excludedRoute.ToUpper()))
+                    return false;
+            }
+            return true;
+        }
+
         public void SetGeolocation(LogLineModel logLine)
         {
             Dns.BeginGetHostAddresses(logLine.Host, async (x) =>

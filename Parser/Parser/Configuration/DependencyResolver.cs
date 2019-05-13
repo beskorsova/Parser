@@ -39,12 +39,11 @@ namespace Parser.Configuration
                 AddDbContext<ParserDbContext>(options =>
                 options.UseSqlServer(connectionString)).
                 AddTransient<IParser, BLL.Parse.Parser>().
-                AddTransient<ILogLineParserHelper, LogLineParserHelper>(provider => 
-                    new LogLineParserHelper(provider.GetService<IOptions<GeolocationOptions>>().Value)
+                AddTransient<ILogLineParserHelper>(provider => 
+                    new LogLineParserHelper(provider.GetService<IOptions<GeolocationOptions>>().Value,
+                    provider.GetService<IOptions<ExcludeRuleOptions>>().Value)
                 ).
-                AddTransient<LineParserBase, AccessLogLineParser>(provider =>
-                    new AccessLogLineParser(provider.GetService<ILogLineParserHelper>()
-                    ,provider.GetService<IOptions<ExcludeRuleOptions>>().Value)).
+                AddTransient<LineParserBase, AccessLogLineParser>().
                 AddTransient<ILogService, LogService>();
 
             services.AddScoped<IAsyncRepository, AsyncRepository>();
