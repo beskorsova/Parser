@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Parser.BLL.Parse
 {
-    public abstract class LineParserBase
+    public abstract class LogLineParserBase
     {
+        // Operating with line - defines indexes where log value is
         protected class LineIndexer
         {
             public int StartIndex { get; private set; }
@@ -43,44 +45,71 @@ namespace Parser.BLL.Parse
                 this.EndIndex = 0;
             }
         }
-
+        
         protected class LinePartParser
         {
-            public Action<string, LogLineModel> Parser { get; private set; }
+            // Get initial value and sets model value for a field
+            public Func<string, LogLineModel, Thread> Parser { get; private set; }
+
+            // Checks if model value fits accepted rules
             public Func<LogLineModel, bool> Filter { get; private set; }
-            public LinePartParser(Action<string, LogLineModel> parser, Func<LogLineModel, bool> filter = null)
+
+            public LinePartParser(Func<string, LogLineModel, Thread> parser, Func<LogLineModel, bool> filter = null)
             {
                 this.Parser = parser;
                 this.Filter = filter;
             }
         }
 
+        // Parsers and filters for each log line part
         protected readonly Dictionary<LinePartEnum, LinePartParser> linePartParsers;
+
+        // Indicator of order in log line for each value
         protected readonly Dictionary<int, LinePartEnum> linePartIndicators;
+
+        // Store for current indexes when parsing line
         protected LineIndexer Indexer { get; private set; } = new LineIndexer();
 
-        protected LineParserBase()
+        protected CancellationTokenSource cts = new CancellationTokenSource();
+
+        protected LogLineParserBase()
         {
             linePartParsers = new Dictionary<LinePartEnum, LinePartParser>();
             linePartIndicators = new Dictionary<int, LinePartEnum>();
         }
 
-        public LogLineModel ParseLine(string line)
+        public Tuple<LogLineModel, List<Thread>> ParseLine(string line)
         {
             var result = new LogLineModel();
+
+            // Set indexes to 0
             Indexer.Reset();
+
+            var threadsToWait = new List<Thread>();
+            // Get each value in order it is contained in line
             for (int i = 0; i <= this.linePartIndicators.Max(x => x.Key); ++i)
             {
+                // Indicate witch line part is next
                 var linePart = this.linePartIndicators.Where(x => x.Key == i).First().Value;
-                linePartParsers[linePart].Parser?.Invoke(line, result);
+
+                // Parse line to get value
+                var thread = linePartParsers[linePart].Parser?.Invoke(line, result);
+                if(thread!=null)
+                {
+                    threadsToWait.Add(thread);
+                }
                 if (linePartParsers[linePart].Filter == null) continue;
+
+                // Checks if the value is acceptable
                 if (!linePartParsers[linePart].Filter.Invoke(result))
                 {
                     result = null;
+                    cts.Cancel();
+                    threadsToWait.Clear();
                     break;
                 }
             }
-            return result;
+            return Tuple.Create(result, threadsToWait);
         }
     }
 }

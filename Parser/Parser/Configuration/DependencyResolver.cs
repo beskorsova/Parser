@@ -43,7 +43,7 @@ namespace Parser.Configuration
                     new LogLineParserHelper(provider.GetService<IOptions<GeolocationOptions>>().Value,
                     provider.GetService<IOptions<ExcludeRuleOptions>>().Value)
                 ).
-                AddTransient<LineParserBase, AccessLogLineParser>().
+                AddTransient<LogLineParserBase, AccessLogLineParser>().
                 AddTransient<ILogService, LogService>();
 
             services.AddScoped<IAsyncRepository, AsyncRepository>();

@@ -5,6 +5,7 @@ using Parser.BLL.Parse.Interfaces;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Parser.BLL.Parse
 {
@@ -30,13 +31,31 @@ namespace Parser.BLL.Parse
             return true;
         }
 
-        public void SetGeolocation(LogLineModel logLine)
+        public Thread SetGeolocation(LogLineModel logLine, CancellationTokenSource cts)
         {
-            Dns.BeginGetHostAddresses(logLine.Host, async (x) =>
+            //Dns.BeginGetHostAddresses(logLine.Host, async (x) =>
+            //{
+            //    try
+            //    {
+            //        var ip = Dns.EndGetHostAddresses(x)[0]?.MapToIPv6().ToString();
+
+            //        using (var client = new WebClient())
+            //        {
+            //            var uri = geolocationOptions.AccessKey == string.Empty ?
+            //            String.Format(geolocationOptions.Uri, ip) :
+            //            String.Format(geolocationOptions.Uri, ip, geolocationOptions.AccessKey);
+            //            var json = await client.DownloadStringTaskAsync(
+            //                new Uri(uri));
+            //            logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName]?.ToString();
+            //        }
+            //    }
+            //    catch(SocketException) { }
+            //}, null);
+            Thread thread = new Thread(async x =>
             {
                 try
                 {
-                    var ip = Dns.EndGetHostAddresses(x)[0]?.MapToIPv6().ToString();
+                    var ip = Dns.GetHostAddresses(logLine.Host)[0]?.MapToIPv6().ToString();
 
                     using (var client = new WebClient())
                     {
@@ -48,8 +67,10 @@ namespace Parser.BLL.Parse
                         logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName]?.ToString();
                     }
                 }
-                catch(SocketException) { }
-            }, null);
+                catch (SocketException) { }
+            });
+            thread.Start(cts);
+            return thread;
         }
     }
 }
