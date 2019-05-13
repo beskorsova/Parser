@@ -8,8 +8,8 @@ namespace Parser.Core.Interfaces
 {
     public interface ILogLineService
     {
-        Task<List<string>> GetTopHosts(int n, DateTime? start, DateTime? end, CancellationToken token = default(CancellationToken));
-        Task<List<string>> GetTopRoutes(int n, DateTime? start, DateTime? end, CancellationToken token = default(CancellationToken));
+        Task<List<string>> GetTopHosts(TopFilterDataModel filter, CancellationToken token = default(CancellationToken));
+        Task<List<string>> GetTopRoutes(TopFilterDataModel filter, CancellationToken token = default(CancellationToken));
         Task<List<LogLineDataModel>> GetAll(DateTime? start, DateTime? end, int offset, int limit = 10, CancellationToken token = default(CancellationToken));
 
     }

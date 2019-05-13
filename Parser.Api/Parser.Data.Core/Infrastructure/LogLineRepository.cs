@@ -32,20 +32,27 @@ namespace Parser.Data.Core.Infrastructure
             var lookup = new Dictionary<long, LogLine>();
             return this.RunAsync(async (dbConnection) =>
                (await dbConnection.QueryAsync<LogLine, QueryParameter, LogLine>
-                 (
+                 (new CommandDefinition(
                      "SELECT l.*, qp.* FROM LogLines l inner join QueryParameters qp on l.Id = qp.LogLineId " +
                      this.GetDateFilter(start, end) +
                      "ORDER BY l.Date ASC " +
                      "OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
+                      new
+                      {
+                          Offset = offset,
+                          Limit = limit,
+                          Start = start ?? default(DateTime),
+                          End = end ?? default(DateTime),
+                      }, cancellationToken: token),
                       (l, qp) => {
-                         LogLine logLine;
-                         if (!lookup.TryGetValue(l.Id, out logLine))
-                         {
+                          LogLine logLine;
+                          if (!lookup.TryGetValue(l.Id, out logLine))
+                          {
                               lookup.Add(l.Id, logLine = l);
-                         }
-                         logLine.Parameters.Add(qp);
-                         return logLine;
-                     }, new { Offset = offset, Limit = limit, Start = start??default(DateTime), End = end??default(DateTime) })).ToList());
+                          }
+                          logLine.Parameters.Add(qp);
+                          return logLine;
+                      })).ToList());
         }
 
         public Task<List<LogLine>> GetTopHosts(int n, DateTime? start, DateTime? end,
@@ -68,7 +75,7 @@ namespace Parser.Data.Core.Infrastructure
                 (new CommandDefinition(
                     "SELECT TOP (@N) l.Route FROM LogLines l " +
                     this.GetDateFilter(start, end) +
-                    "GROUP BY l.Host ORDER BY COUNT(*) DESC",
+                    "GROUP BY l.Route ORDER BY COUNT(*) DESC",
                     new { N = n, Start = start ?? default(DateTime), End = end ?? default(DateTime) },
                     cancellationToken: token))).ToList());
         }

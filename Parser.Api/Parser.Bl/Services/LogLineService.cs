@@ -27,16 +27,16 @@ namespace Parser.Bl.Services
             return this.mapper.Map<List<LogLineDataModel>>(logLines);
         }
 
-        public async Task<List<string>> GetTopHosts(int n, DateTime? start, DateTime? end, CancellationToken token = default(CancellationToken))
+        public async Task<List<string>> GetTopHosts(TopFilterDataModel filter, CancellationToken token = default(CancellationToken))
         {
-            return (await this.logLineRepository.GetTopHosts(n, start, end, token))
+            return (await this.logLineRepository.GetTopHosts(filter.N, filter.Start, filter.End, token))
                 .Select(x => x.Host).ToList();
         }
 
-        public async Task<List<string>> GetTopRoutes(int n, DateTime? start, DateTime? end, CancellationToken token = default(CancellationToken))
+        public async Task<List<string>> GetTopRoutes(TopFilterDataModel filter, CancellationToken token = default(CancellationToken))
         {
-            return (await this.logLineRepository.GetTopRoutes(n, start, end, token))
-               .Select(x => x.Host).ToList();
+            return (await this.logLineRepository.GetTopRoutes(filter.N, filter.Start, filter.End, token))
+               .Select(x => x.Route).ToList();
         }
     }
 }

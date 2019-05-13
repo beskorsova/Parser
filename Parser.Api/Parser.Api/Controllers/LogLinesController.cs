@@ -25,13 +25,15 @@ namespace Parser.Api.Controllers
         [HttpGet("topHosts")]
         public async Task<ActionResult<List<string>>> GetTopHostsAsync([FromQuery] TopFilterModel filterModel)
         {
-            return await this.logLineService.GetTopHosts(filterModel.N, filterModel.Start, filterModel.End);
+            var filderDataModel = this.mapper.Map<TopFilterDataModel>(filterModel);
+            return await this.logLineService.GetTopHosts(filderDataModel);
         }
 
         [HttpGet("topRoutes")]
         public async Task<ActionResult<List<string>>> GetTopRoutesAsync([FromQuery] TopFilterModel filterModel)
         {
-            return await this.logLineService.GetTopRoutes(filterModel.N, filterModel.Start, filterModel.End);
+            var filderDataModel = this.mapper.Map<TopFilterDataModel>(filterModel);
+            return await this.logLineService.GetTopRoutes(filderDataModel);
         }
 
         [HttpGet]

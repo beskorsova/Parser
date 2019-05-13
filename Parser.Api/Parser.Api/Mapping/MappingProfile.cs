@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Parser.Api.Model;
+using Parser.Api.Model.Filters;
 using Parser.Core.Models;
 using Parser.Data.Core.Entities;
 
@@ -16,6 +17,8 @@ namespace Parser.Api.Mapping
         {
             CreateMap<LogLine, LogLineDataModel>();
             CreateMap<LogLineDataModel, LogLineModel>();
+            CreateMap<TopFilterModel, TopFilterDataModel>()
+                .ForMember(dest => dest.N, opt => opt.Condition(src => (src.N.HasValue)));
         }
     }
 }
