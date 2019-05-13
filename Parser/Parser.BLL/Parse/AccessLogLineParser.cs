@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Parser.BLL.Parse
 {
-    public class AccessLogLineParser : LineParserBase
+    public class AccessLogLineParser : LogLineParserBase
     {
         private readonly ILogLineParserHelper logLineParserHelper;
         private readonly string dateFormat = "dd/MMM/yyyy:HH:mm:ss zzz";
@@ -12,6 +12,8 @@ namespace Parser.BLL.Parse
         public AccessLogLineParser(ILogLineParserHelper logLineParserHelper)
         {
             this.logLineParserHelper = logLineParserHelper;
+
+            // Set parsers and filters for each log value
 
             this.linePartParsers.Add(LinePartEnum.Host, new LinePartParser((line, model) =>
             {
@@ -76,6 +78,8 @@ namespace Parser.BLL.Parse
                     model.BytesSent = bytesSent;
                 }
             }));
+
+            // Set order is which log values are placed in line
 
             this.linePartIndicators.Add(0, LinePartEnum.Host);
             this.linePartIndicators.Add(1, LinePartEnum.Date);

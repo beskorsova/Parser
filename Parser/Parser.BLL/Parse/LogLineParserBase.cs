@@ -5,8 +5,9 @@ using System.Linq;
 
 namespace Parser.BLL.Parse
 {
-    public abstract class LineParserBase
+    public abstract class LogLineParserBase
     {
+        // Operating with line - defines indexes where log value is
         protected class LineIndexer
         {
             public int StartIndex { get; private set; }
@@ -44,9 +45,13 @@ namespace Parser.BLL.Parse
             }
         }
 
+        
         protected class LinePartParser
         {
+            // Get initial string and sets model value for a field
             public Action<string, LogLineModel> Parser { get; private set; }
+            
+            // Checks if model value fits accepted rules
             public Func<LogLineModel, bool> Filter { get; private set; }
             public LinePartParser(Action<string, LogLineModel> parser, Func<LogLineModel, bool> filter = null)
             {
@@ -55,11 +60,16 @@ namespace Parser.BLL.Parse
             }
         }
 
+        // Parsers and filters for each log line part
         protected readonly Dictionary<LinePartEnum, LinePartParser> linePartParsers;
+
+        // Indicator of order in log line for each value
         protected readonly Dictionary<int, LinePartEnum> linePartIndicators;
+        
+        // Store for current indexes when parsing line
         protected LineIndexer Indexer { get; private set; } = new LineIndexer();
 
-        protected LineParserBase()
+        protected LogLineParserBase()
         {
             linePartParsers = new Dictionary<LinePartEnum, LinePartParser>();
             linePartIndicators = new Dictionary<int, LinePartEnum>();
@@ -68,12 +78,21 @@ namespace Parser.BLL.Parse
         public LogLineModel ParseLine(string line)
         {
             var result = new LogLineModel();
+            
+            // Set indexes to 0
             Indexer.Reset();
+            
+            // Get each log value in order it is contained in line
             for (int i = 0; i <= this.linePartIndicators.Max(x => x.Key); ++i)
             {
+                // Indicate witch line part is next in line
                 var linePart = this.linePartIndicators.Where(x => x.Key == i).First().Value;
+                
+                // Parse line to get value
                 linePartParsers[linePart].Parser?.Invoke(line, result);
                 if (linePartParsers[linePart].Filter == null) continue;
+
+                // Checks if the value is acceptable
                 if (!linePartParsers[linePart].Filter.Invoke(result))
                 {
                     result = null;
