@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Parser.Bl.Services;
+using Parser.Core.Interfaces;
 using Parser.Data.Core.DataAccess;
 using Parser.Data.Core.Infrastructure;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
 
 namespace Parser.Api
 {
@@ -29,8 +33,12 @@ namespace Parser.Api
                 });
             });
 
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             services.AddScoped<IParserConnection>(sp => new ParserConnection(Configuration.GetConnectionString("Default")));
             services.AddScoped<ILogLineRepository, LogLineRepository>();
+
+            services.AddTransient<ILogLineService, LogLineService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
