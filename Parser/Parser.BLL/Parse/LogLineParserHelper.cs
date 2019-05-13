@@ -43,6 +43,7 @@ namespace Parser.BLL.Parse
                         var uri = geolocationOptions.AccessKey == string.Empty ?
                         String.Format(geolocationOptions.Uri, ip) :
                         String.Format(geolocationOptions.Uri, ip, geolocationOptions.AccessKey);
+
                         var json = await client.DownloadStringTaskAsync(
                             new Uri(uri));
                         logLine.Country = JObject.Parse(json)[geolocationOptions.GeolocationFieldName]?.ToString();
