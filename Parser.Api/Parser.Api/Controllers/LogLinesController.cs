@@ -33,9 +33,9 @@ namespace Parser.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LogLine>>> GetAll([FromQuery] TopFilterModel filterModel)
+        public async Task<ActionResult<List<LogLine>>> GetAll([FromQuery] TableFilterModel filterModel)
         {
-            return await this.logLineRepository.GetAll(filterModel.Start.Value, filterModel.End.Value, 0);
+            return await this.logLineRepository.GetAll(filterModel.Start.Value, filterModel.End.Value, filterModel.Offset, filterModel.Limit);
         }
         
     }

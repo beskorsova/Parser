@@ -22,7 +22,8 @@ namespace Parser.Data.Core.Infrastructure
             return this.RunAsync(async (dbConnection) =>
                (await dbConnection.QueryAsync<LogLine, QueryParameter, LogLine>
                  (
-                     "SELECT l.*, qp.* FROM LogLines l inner join QueryParameters qp on l.Id = qp.LogLineId",
+                     "SELECT l.*, qp.* FROM LogLines l inner join QueryParameters qp on l.Id = qp.LogLineId ORDER BY l.Date ASC " +
+                     "OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
                       (l, qp) => {
                          LogLine logLine;
                          if (!lookup.TryGetValue(l.Id, out logLine))
@@ -31,7 +32,7 @@ namespace Parser.Data.Core.Infrastructure
                          }
                          logLine.Parameters.Add(qp);
                          return logLine;
-                     })).ToList());
+                     }, new { Offset = offset, Limit = limit })).ToList());
         }
 
         public Task<List<LogLine>> GetTopHosts(int n, DateTime start, DateTime end,
@@ -40,7 +41,7 @@ namespace Parser.Data.Core.Infrastructure
             return this.RunAsync(async (dbConnection) =>
               (await dbConnection.QueryAsync<LogLine>
                 (new CommandDefinition(
-                    "SELECT TOP (@N) l.Host FROM LogLines l WHERE Date BETWEEN @Start AND @End " +
+                    "SELECT TOP (@N) l.Host FROM LogLines l WHERE Date >= @Start AND Date <= @End " +
                     "GROUP BY l.Host ORDER BY COUNT(*) DESC",
                     new { N = n, Start = start, End = end },
                     cancellationToken: token))).ToList());
@@ -51,7 +52,7 @@ namespace Parser.Data.Core.Infrastructure
             return this.RunAsync(async (dbConnection) =>
               (await dbConnection.QueryAsync<LogLine>
                 (new CommandDefinition(
-                    "SELECT TOP (@N) l.Route FROM LogLines l WHERE Date BETWEEN @Start AND @End " +
+                    "SELECT TOP (@N) l.Route FROM LogLines l WHERE Date >= @Start AND Date <= @End " +
                     "GROUP BY l.Host ORDER BY COUNT(*) DESC",
                     new { N = n, Start = start, End = end },
                     cancellationToken: token))).ToList());
