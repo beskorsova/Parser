@@ -57,11 +57,10 @@ namespace Parser.BLL.Parse
 
         protected readonly Dictionary<LinePartEnum, LinePartParser> linePartParsers;
         protected readonly Dictionary<int, LinePartEnum> linePartIndicators;
-        protected LineIndexer Indexer { get; private set; }
+        protected LineIndexer Indexer { get; private set; } = new LineIndexer();
 
         protected LineParserBase()
         {
-            this.Indexer = new LineIndexer();
             linePartParsers = new Dictionary<LinePartEnum, LinePartParser>();
             linePartIndicators = new Dictionary<int, LinePartEnum>();
         }
