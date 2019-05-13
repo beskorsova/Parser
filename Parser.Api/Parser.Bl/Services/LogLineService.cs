@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,9 +20,9 @@ namespace Parser.Bl.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<LogLineDataModel>> GetAll(DateTime? start, DateTime? end, int offset, int limit = 10, CancellationToken token = default(CancellationToken))
+        public async Task<List<LogLineDataModel>> GetAll(TableFilterDataModel filter, CancellationToken token = default(CancellationToken))
         {
-            var logLines = await this.logLineRepository.GetAll(start, end, offset, limit, token);
+            var logLines = await this.logLineRepository.GetAll(filter.Start, filter.End, filter.Offset, filter.Limit, token);
             return this.mapper.Map<List<LogLineDataModel>>(logLines);
         }
 

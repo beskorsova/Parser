@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -23,23 +24,24 @@ namespace Parser.Api.Controllers
         }
 
         [HttpGet("topHosts")]
-        public async Task<ActionResult<List<string>>> GetTopHostsAsync([FromQuery] TopFilterModel filterModel)
+        public async Task<ActionResult<List<string>>> GetTopHostsAsync([FromQuery] TopFilterModel filterModel, CancellationToken cancellationToken)
         {
             var filderDataModel = this.mapper.Map<TopFilterDataModel>(filterModel);
-            return await this.logLineService.GetTopHosts(filderDataModel);
+            return await this.logLineService.GetTopHosts(filderDataModel, cancellationToken);
         }
 
         [HttpGet("topRoutes")]
-        public async Task<ActionResult<List<string>>> GetTopRoutesAsync([FromQuery] TopFilterModel filterModel)
+        public async Task<ActionResult<List<string>>> GetTopRoutesAsync([FromQuery] TopFilterModel filterModel, CancellationToken cancellationToken)
         {
             var filderDataModel = this.mapper.Map<TopFilterDataModel>(filterModel);
-            return await this.logLineService.GetTopRoutes(filderDataModel);
+            return await this.logLineService.GetTopRoutes(filderDataModel, cancellationToken);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LogLineModel>>> GetAll([FromQuery] TableFilterModel filterModel)
+        public async Task<ActionResult<List<LogLineModel>>> GetAll([FromQuery] TableFilterModel filterModel, CancellationToken cancellationToken)
         {
-            var logLinesData = await this.logLineService.GetAll(filterModel.Start, filterModel.End, filterModel.Offset, filterModel.Limit);
+            var filderDataModel = this.mapper.Map<TableFilterDataModel>(filterModel);
+            var logLinesData = await this.logLineService.GetAll(filderDataModel, cancellationToken);
             return this.mapper.Map<List<LogLineModel>>(logLinesData);
         }
         

@@ -19,6 +19,8 @@ namespace Parser.Api.Mapping
             CreateMap<LogLineDataModel, LogLineModel>();
             CreateMap<TopFilterModel, TopFilterDataModel>()
                 .ForMember(dest => dest.N, opt => opt.Condition(src => (src.N.HasValue)));
+            CreateMap<TableFilterModel, TableFilterDataModel>()
+                .ForMember(dest => dest.Limit, opt => opt.Condition(src => (src.Limit.HasValue)));
         }
     }
 }
