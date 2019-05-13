@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Parser.Data.Core.DataAccess;
 using Parser.Data.Core.Infrastructure;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Parser.Api
 {
@@ -20,6 +21,14 @@ namespace Parser.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                   Version  = "v1" 
+                });
+            });
+
             services.AddScoped<IParserConnection>(sp => new ParserConnection(Configuration.GetConnectionString("Default")));
             services.AddScoped<ILogLineRepository, LogLineRepository>();
 
@@ -33,6 +42,12 @@ namespace Parser.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "");
+            });
 
             app.UseMvc();
         }
